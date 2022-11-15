@@ -1,0 +1,94 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  INPUT: data/sample.filebeat.log
+  POD: filebeat-rzlst
+  NAMESPACE: kube-system
+  CONTEXT: kind-multi-v1.23.5
+
+tasks:
+  requirements:
+    aliases:
+      - "req"
+    cmds:
+      - brew install xsv
+      - pip install jsoncsv
+      - brew install miller
+      # - pip install --upgrade pip
+      # - pip install rich
+      # - pip install "rich[jupyter]"
+      - brew install bat
+
+  sample:
+    cmds:
+      - cat {{.INPUT}} | tail -n 1 | jq .
+
+  parse_logs:
+    # unbuffer logs for `kubectl logs -f`
+    # `brew install coreutils` for stdbuf command
+    cmds:
+      - cat {{.INPUT}} | grep {{.GREP}} | {{.HEAD_TAIL}} -n {{.LINES}} | jsoncsv | mkexcel | xsv select {{.COLUMNS}} | xsv sort -s @timestamp {{.REVERSE}} | xsv table
+    vars:
+      LINES: '{{default "100" .LINES}}'
+
+      # GREP: '{{default "error" .GREP}}'
+      GREP: '{{default "@timestamp" .GREP}}'
+
+      HEAD_TAIL: '{{default "head" .HEAD_TAIL}}'
+      # HEAD_TAIL: '{{default "tail" .HEAD_TAIL}}'
+
+      REVERSE: '{{default "" .REVERSE}}'
+      # REVERSE: "-R"
+
+      # COLUMNS: '{{default "@timestamp" .COLUMNS}}'
+      COLUMNS: '@timestamp,message'
+
+  pod-logs:
+    cmds: 
+      - |
+        /usr/local/bin/kubectl logs {{.POD}} -n {{.NAMESPACE}} --context {{.CONTEXT}} \
+        | jq -r -c '{timestamp:."@timestamp", level:."log.level", logger:."log.logger", message:.message}' \
+        | jsoncsv | mkexcel  \
+        | xsv select timestamp,level,logger,message \
+        | xsv table \
+        | bat -l csv
+
+  pod-logs-json:
+    cmds: 
+      - |
+        /usr/local/bin/kubectl logs -f {{.POD}} -n {{.NAMESPACE}} --context {{.CONTEXT}} \
+        | jq -r -c '{timestamp:."@timestamp", level:."log.level", logger:."log.logger", message:.message}' \
+
+  pod-logs-sample:
+    cmds: 
+      - |
+        /usr/local/bin/kubectl logs {{.POD}} -n {{.NAMESPACE}} --context {{.CONTEXT}} \
+        | head -n 1 \
+        | jq . \
+        | bat -l json
+
+  pod-logs-csv:
+    cmds: 
+      - |
+        /usr/local/bin/kubectl logs {{.POD}} -n {{.NAMESPACE}} --context {{.CONTEXT}} \
+        | jq -r -c '{timestamp:."@timestamp", level:."log.level", logger:."log.logger", message:.message}' \
+        | jsoncsv | mkexcel  \
+        | xsv select timestamp,level,logger,message \
+        | mlr --csv cat       
+
+  default:
+    cmds:
+      - python main.py
+
+  rich:
+    cmds:
+      - | 
+        cat data/algorithms.json \
+        | jq -r -c "{id:.id, title:.title}" \
+        | head -n 1 \
+        | jq . \
+        > data/title.json
+      - |
+        rich --theme nord -json data/title.json

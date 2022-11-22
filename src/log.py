@@ -1,51 +1,44 @@
-
-
 import json
 import time
 
 from rich.console import Console
-from rich.table import Table
-from rich.live import Live
+from rich.table import Table, Column
+from rich.markup import escape
 
 class ColoredLogs:
-    def __init__(self, columns, in_file, out_file):
+    def __init__(self, title, columns, input, highlighter, theme):
+        self.title = title
         self.columns = self.get_cols(columns)
-        self.in_file = in_file
-        self.out_file = out_file
+        self.input = input
+        self.highlighter = highlighter
+        self.theme = theme
 
     def get_cols(self, columns):
         parts = columns.split(",")
-        return [col.strip() for col in parts]
+        ans = []
+        for col in parts:
+            col = col.strip()
+            c = Column(col, justify="left", style="grey62", overflow="fold")
+            ans.append(c)
+        return ans
 
     def process(self):
-        table = Table(title="Leetcode")
+        table = Table(*self.columns, title=self.title, highlight=True)
 
-        table.add_column("Id", justify="left", style="light_sea_green", no_wrap=True)
-        table.add_column("Title", style="grey62")
+        line = self.input.readline()
+        while line:
+            d = json.loads(line)
 
-        with Live(table, refresh_per_second=4):  # update 4 times a second to feel fluid
-            line = self.in_file.readline()
-            count = 0
-            while line:
-                d = json.loads(line)
+            values = []
+            for col in self.columns:
+                v = escape(d[col.header])
 
-                obj = {}
-                for col in self.columns:
-                    obj[col] = d[col]
+                values.append(v)
 
-                time.sleep(0.4)
-                table.add_row(*obj.values())
-                count += 1
+            table.add_row(*values)
 
-                if count > 20:
-                    break
+            line = self.input.readline()
 
-                # ans = json.dumps(obj)
-
-                # self.out_file.write(ans)
-                # self.out_file.write("\n")
-
-                line = self.in_file.readline()
-
-            # console = Console()
-            # console.print(table)
+        console = Console(highlighter=self.highlighter, theme=self.theme)
+        with console.pager(styles=True):
+            console.print(table)

@@ -54,7 +54,9 @@ class ColoredLogs:
 
                 table.add_row(*values)
             except Exception as e:
-                print(f"Exception {e}, Ignored line: {line}", end="")
+                row = len(self.columns) * ["-"]
+                row[-1] = line.strip()
+                table.add_row(*row)
 
             line = self.input.readline()
 

@@ -23,6 +23,15 @@ class ColoredLogs:
             c = Column(col_name, justify="left", style="grey62", overflow="fold")
             ans.append(c)
         return ans
+    
+    def parse_jsonpath(self, header, d):
+        try:
+            jsonpath_expression = parse(header)
+            match = jsonpath_expression.find(d)
+            v = escape(match[0].value)
+            return v
+        except Exception as e:
+            return "-"
 
     def process(self):
         table = Table(*self.columns, title=self.title, highlight=True)
@@ -35,9 +44,9 @@ class ColoredLogs:
                 values = []
                 for col in self.columns:
                     if str(col.header).startswith("$"):
-                        jsonpath_expression = parse(col.header)
-                        match = jsonpath_expression.find(d)
-                        v = escape(match[0].value)
+                        v = self.parse_jsonpath(col.header, d)
+                    elif col.header not in d:
+                        v = "-"
                     else:
                         v = escape(d[col.header])
 
@@ -45,7 +54,7 @@ class ColoredLogs:
 
                 table.add_row(*values)
             except Exception as e:
-                print(f"Ignored line: {line}", end="")
+                print(f"Exception {e}, Ignored line: {line}", end="")
 
             line = self.input.readline()
 

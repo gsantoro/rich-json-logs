@@ -18,7 +18,5 @@ def main(input_path):
     log = ColoredLogs("Logs", "@timestamp, log.level, message", input_file, highlighter, theme)
     log.process()
 
-    # input_file.close()
-
 if __name__ == '__main__':
     main()

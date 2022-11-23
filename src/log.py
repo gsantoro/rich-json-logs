@@ -27,18 +27,21 @@ class ColoredLogs:
 
         line = self.input.readline()
         while line:
-            d = json.loads(line)
+            try:
+                d = json.loads(line)
+                
+                values = []
+                for col in self.columns:
+                    v = escape(d[col.header])
 
-            values = []
-            for col in self.columns:
-                v = escape(d[col.header])
+                    values.append(v)
 
-                values.append(v)
-
-            table.add_row(*values)
+                table.add_row(*values)
+            except:
+                print(f"Ignored line: {line}", end="")
 
             line = self.input.readline()
 
-        console = Console(highlighter=self.highlighter, theme=self.theme)
+        console = Console(highlighter=self.highlighter, theme=self.theme, force_terminal=True)
         with console.pager(styles=True):
             console.print(table)

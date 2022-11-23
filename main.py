@@ -6,7 +6,8 @@ from src.highlighter import LogHighlighter, LogTheme
 
 @click.command()
 @click.option("-i", "--input-path", help="Input path")
-def main(input_path):    
+@click.option("-c", "--columns", default="@timestamp, log.level, message", help="Columns to filter")
+def main(input_path, columns):    
     highlighter = LogHighlighter()
     theme = LogTheme
     
@@ -15,7 +16,7 @@ def main(input_path):
     else:
         input_file = open(input_path, 'r')
 
-    log = ColoredLogs("Logs", "@timestamp, log.level, message", input_file, highlighter, theme)
+    log = ColoredLogs("Logs", columns, input_file, highlighter, theme)
     log.process()
 
 if __name__ == '__main__':

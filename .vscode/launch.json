@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/main.py",
-            "args": ["-i", "data/sample.elastic-agent.log"],
+            "args": ["-i", "data/sample.log", "-c", "@timestamp,log.logger,$.'log.origin'.'file.name',message"],
             "console": "integratedTerminal",
             "justMyCode": true
         }

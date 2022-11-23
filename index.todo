@@ -1,0 +1,3 @@
+Todo:
+- [x] add support for jsonpath when filtering columns
+- [ ] add support for adding more highlighting via cmd line option

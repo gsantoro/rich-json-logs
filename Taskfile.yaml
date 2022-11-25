@@ -2,12 +2,6 @@
 
 version: '3'
 
-vars:
-  INPUT: data/sample.filebeat.log
-  POD: filebeat-rzlst
-  NAMESPACE: kube-system
-  CONTEXT: kind-multi-v1.23.5
-
 tasks:
   requirements:
     aliases:

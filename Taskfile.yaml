@@ -13,15 +13,7 @@ tasks:
     aliases:
       - "req"
     cmds:
-      - pip install --upgrade pip
-      - pip install rich
-      - pip install "rich[jupyter]"
-
-  install-requirements:
-    cmds:
-      - pipenv requirements > requirements.txt
-      - pyenv activate colored-logs-3.10.5
-      - pip install -r requirements.txt
+      - poetry export -f requirements.txt --output requirements.txt --without-hashes --without-urls
 
   default:
     cmds:

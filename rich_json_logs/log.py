@@ -5,7 +5,8 @@ from rich.console import Console
 from rich.table import Table, Column
 from rich.markup import escape
 
-from jsonpath_ng import jsonpath, parse
+from jsonpath_ng import parse
+
 
 class ColoredLogs:
     def __init__(self, title, columns, input, highlighter, theme):
@@ -20,10 +21,13 @@ class ColoredLogs:
         ans = []
         for col in parts:
             col_name = col.strip()
-            c = Column(col_name, justify="left", style="grey62", overflow="fold")
+            c = Column(col_name,
+                       justify="left",
+                       style="grey62",
+                       overflow="fold")
             ans.append(c)
         return ans
-    
+
     def parse_jsonpath(self, header, d):
         try:
             jsonpath_expression = parse(header)
@@ -40,7 +44,7 @@ class ColoredLogs:
         while line:
             try:
                 d = json.loads(line)
-                
+
                 values = []
                 for col in self.columns:
                     if str(col.header).startswith("$"):
@@ -60,6 +64,8 @@ class ColoredLogs:
 
             line = self.input.readline()
 
-        console = Console(highlighter=self.highlighter, theme=self.theme, force_terminal=True)
+        console = Console(highlighter=self.highlighter,
+                          theme=self.theme,
+                          force_terminal=True)
         with console.pager(styles=True):
             console.print(table)

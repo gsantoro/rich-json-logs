@@ -12,3 +12,7 @@ tasks:
   default:
     cmds:
       - python main.py
+
+  publish:
+    cmds:
+      - poetry --build publish

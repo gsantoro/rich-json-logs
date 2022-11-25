@@ -1,8 +1,8 @@
 
 import sys
-from colored_logs.log import ColoredLogs
+from rich_json_logs.log import ColoredLogs
 import click
-from colored_logs.highlighter import LogHighlighter, LogTheme
+from rich_json_logs.highlighter import LogHighlighter, LogTheme
 
 @click.command()
 @click.option("-i", "--input-path", help="Input path")

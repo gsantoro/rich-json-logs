@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "colored-logs"
+name = "rich-json-logs"
 version = "0.1.0"
 description = ""
 authors = ["gsantoro <giuseppe.santoro@gmail.com>"]

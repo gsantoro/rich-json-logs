@@ -1,6 +1,6 @@
 # Readme
 
-Colored-logs is a command line tool written in Python that allows to visualize logs in a tabular format. 
+Rich-json-logs is a command line tool written in Python that allows to visualize logs in a tabular format. 
 
 By default it tries to parse json logs and extract the relevant columns passed as options. If a list of columns is not provided it uses the default value `@timestamp,log.level,message`. You can also use jsonpath to extract nested json columns (even with `.` in the column name) like `@timestamp,log.logger,$.'log.origin'.'file.name',message`. In case a column is not present in a json line, the value for that column will be filled with `-` instead.
 
@@ -41,7 +41,8 @@ Options:
 ```
 
 ## Kubectl plugin
-Colored-logs can be used as a kubectl plugin by wrapping it in a bash script
+Rich-json-logs
+can be used as a kubectl plugin by wrapping it in a bash script
 
 ```bash
 #!/bin/bash

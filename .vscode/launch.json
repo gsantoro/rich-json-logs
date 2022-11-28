@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/main.py",
             "args": ["-i", "data/sample.log", "-c", "@timestamp,log.logger,$.'log.origin'.'file.name',message"],
             "console": "integratedTerminal",
-            "justMyCode": true
+            "justMyCode": false
         }
     ]
 }
